@@ -1,26 +1,491 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>資産台帳 | 個人資産管理</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
-:root{--paper:#efeae0;--paper2:#e7dfcf;--ink:#26333e;--soft:#5c6b73;--faint:#8b9299;--seal:#a2402f;--jade:#3e6c58;--gold:#ad8a3c;--blue:#3d5a73;--card:#fbf8f1;--line:#26333e12;--shadow:0 5px 18px #26333e18}*{box-sizing:border-box}html,body{margin:0}body{min-height:100vh;background:linear-gradient(180deg,var(--paper),var(--paper2));font-family:'Noto Sans JP',sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}#app{max-width:460px;margin:auto;padding:20px 16px 48px}.head{display:flex;justify-content:space-between;margin-bottom:20px}.title{font:800 24px 'Shippori Mincho',serif;letter-spacing:.04em}.sub,.meta,.hint{font-size:11px;color:var(--soft)}.stamp{width:54px;height:54px;border-radius:50%;background:var(--seal);color:#fff;display:grid;place-items:center;font-weight:700;transform:rotate(-6deg)}.tabs{display:flex;gap:3px;padding:4px;background:#26333e0d;border-radius:14px;margin-bottom:20px}.tabs button,.pill{flex:1;border:0;border-radius:11px;padding:9px 3px;background:transparent;color:var(--soft);font-size:11.5px}.tabs button.active,.pill.active,.primary{background:var(--ink);color:var(--paper)}.card,.list,.balance,.summary,.chart-card{background:var(--card);border-radius:18px;box-shadow:var(--shadow)}.card,.chart-card{padding:18px 20px}.hero-label,.label{font-size:12px;color:var(--soft)}.hero-value{font:800 34px 'Shippori Mincho',serif;margin:5px 0}.section{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 10px;font-size:13px;font-weight:700;color:var(--soft)}.section small{font-size:11px;font-weight:400;color:var(--faint)}.list{overflow:hidden}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;transition:background .15s}.row:nth-child(even){background:#26333e06}.row:hover,.row:active{background:#26333e12}.name{font-size:14px}.amount{font-size:15px;font-weight:700;white-space:nowrap;text-align:right}.pos{color:var(--jade)}.neg{color:var(--seal)}.blue{color:var(--blue)}.tag{font-size:9px;border-radius:99px;padding:2px 7px;background:#ad8a3c29;color:var(--gold);margin-right:5px}.ticker{font-size:10px;color:var(--blue);margin-left:6px}.add{width:100%;border:0;border-radius:13px;margin-top:12px;padding:12px;background:#26333e0d;color:var(--soft);font-weight:600}.balance{padding:18px 20px;margin:18px 0;background:linear-gradient(135deg,#3e6c5829,#fbf8f1)}.balance.negative{background:linear-gradient(135deg,#a2402f29,#fbf8f1)}.balance-value{font:800 30px 'Shippori Mincho',serif;margin:4px 0}.balance-sub{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:11px;margin-top:12px}.summary{display:flex;text-align:center;padding:14px 4px}.summary>div{flex:1}.summary b{display:block;margin-top:4px}.pills{display:flex;gap:6px;margin-bottom:10px}.pill{flex:initial;padding:6px 14px;background:#26333e0d}.form{background:var(--card);padding:20px;border-radius:20px;box-shadow:0 8px 30px #26333e26;width:min(100%,420px);max-height:88vh;overflow:auto}.form-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.form h3{font-size:15px;margin:0}.delete{border:0;border-radius:9px;padding:6px 10px;color:var(--seal);background:#a2402f18}.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--soft);margin-bottom:5px}.field input,.field select{width:100%;border:0;border-radius:11px;padding:11px 12px;background:#26333e0b;color:var(--ink)}.field input:focus,.field select:focus{outline:2px solid var(--ink)}.actions{display:flex;gap:8px;margin-top:16px}.actions button{flex:1;border:0;border-radius:13px;padding:11px}.ghost{background:#26333e0d}.toggle{display:flex;gap:4px;background:#26333e0b;padding:4px;border-radius:12px}.toggle button{flex:1;border:0;background:transparent;border-radius:9px;padding:8px}.toggle .income{background:var(--jade);color:#fff}.toggle .expense{background:var(--seal);color:#fff}.bar{height:8px;border-radius:99px;background:#26333e12;overflow:hidden;margin-top:6px}.fill{height:100%;border-radius:99px}.fill.income{background:#7ca694}.fill.expense{background:#c97a65}.empty{text-align:center;color:var(--faint);font-size:12px;padding:18px}.note{text-align:center;color:var(--faint);font-size:10.5px;margin-top:28px;line-height:1.6}.chart-card{margin-top:14px}.chart-title{font-size:13px;font-weight:700;color:var(--soft);margin-bottom:10px}.chart-wrap{height:180px;width:100%}.chart-wrap svg{width:100%;height:100%;overflow:visible}.chart-help{font-size:10px;color:var(--faint);margin-top:8px}.quote{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}.quote button{border:0;border-radius:9px;padding:6px 9px;background:#26333e0d;color:var(--soft);font-size:11px}.status{font-size:10px;color:var(--faint)}.calendar-nav{display:flex;align-items:center;justify-content:space-between;margin:18px 0}.calendar-nav button{border:0;border-radius:10px;background:#26333e0d;padding:7px 14px;color:var(--ink)}.cal-title{font:700 17px 'Shippori Mincho',serif}.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.weekday{text-align:center;font-size:10px;color:var(--faint);padding-bottom:5px}.day{aspect-ratio:1;border-radius:11px;background:#26333e09;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px}.day.today{box-shadow:inset 0 0 0 2px var(--ink)}.day .net{font-size:8.5px;margin-top:3px;font-weight:700}.overlay{position:fixed;inset:0;z-index:20;background:#26333e73;display:flex;align-items:center;justify-content:center;padding:18px;animation:fade .18s ease}.modal{animation:pop .2s ease}.sheet-overlay{align-items:flex-end;padding:0}.sheet{border-radius:22px 22px 0 0;max-height:86vh}.close{border:0;border-radius:50%;width:30px;height:30px}.pie{display:flex;align-items:center;gap:18px;justify-content:center}.legend{font-size:11px;line-height:1.9}.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-</style></head><body><main id="app"></main><script>
-const KEY='asset-ledger-stock-v1',OLD='asset-ledger-data-v4',pad=n=>String(n).padStart(2,'0'),uid=()=>Math.random().toString(36).slice(2)+Date.now(),yen=n=>'¥'+Math.round(Number(n)||0).toLocaleString('ja-JP'),signed=n=>(n>0?'+':n<0?'-':'')+yen(Math.abs(n)),today=()=>{let d=new Date();return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`},esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),sum=(a,k)=>a.reduce((s,x)=>s+(Number(x[k])||0),0);
-function seed(){let [y,m]=today().split('-').map(Number),mo=`${y}-${pad(m)}`;return{cash:[['普通預金（メインバンク）',850000],['給与振込口座',320000],['貯蓄預金',1200000]].map(x=>({id:uid(),name:x[0],amount:x[1]})),invest:[['eMAXIS Slim 全世界株式','NISA','ACWI',1250000,180000,10,98000],['eMAXIS Slim 米国株式(S&P500)','NISA','VOO',980000,95000,5,177000],['トヨタ自動車','株式','7203.T',420000,-15000,100,3000],['ソニーグループ','株式','6758.T',310000,42000,50,6200]].map(x=>({id:uid(),name:x[0],type:x[1],ticker:x[2],amount:x[3],gain:x[4],shares:x[5],costPrice:x[6],currentPrice:x[6]+x[4]/x[5],history:[]})),points:[['楽天ポイント','ポイント',12000],['Vポイント','ポイント',3500],['ANAマイル','マイル',18500]].map(x=>({id:uid(),name:x[0],type:x[1],amount:x[2]})),tx:[['給与',380000,'income',5],['副業収入',25000,'income',20],['食費',12000,'expense',6],['光熱費',14000,'expense',10],['交際費',18000,'expense',15],['食費',15000,'expense',18],['その他',12000,'expense',22],['食費',15000,'expense',25]].map(x=>({id:uid(),name:x[0],amount:x[1],type:x[2],date:`${mo}-${pad(x[3])}`,memo:'',accountId:'',applied:false})),recurring:[['家賃',95000,2,'口座振替'],['通信費（携帯・ネット）',8500,12,''],['Netflix',1980,27,'サブスク']].map(x=>({id:uid(),name:x[0],amount:x[1],day:x[2],memo:x[3],type:'expense'}))}};
-function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY)||'null')||JSON.parse(localStorage.getItem(OLD)||'null')}catch(e){}if(!d)d=seed();d.cash=d.cash||[];d.invest=d.invest||[];d.points=d.points||[];d.tx=d.tx||d.transactions||[];d.recurring=d.recurring||[];d.invest=d.invest.map(x=>({...x,ticker:x.ticker||'',shares:Number(x.shares)||1,costPrice:Number(x.costPrice)||Number(x.amount)||0,currentPrice:Number(x.currentPrice)||Number(x.costPrice)||Number(x.amount)||0,history:x.history||[]}));d.tx=d.tx.map(x=>({...x,accountId:x.accountId||'',applied:!!x.applied}));return d}let data=load(),tab='summary',filter='all',edit=null,kind='expense',year=new Date().getFullYear(),month=new Date().getMonth(),selected=null,quoteBusy=false;
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}function monthTx(y=year,m=month){let mk=`${y}-${pad(m+1)}`,days=new Date(y,m+1,0).getDate();return[...data.tx.filter(x=>x.date.startsWith(mk)),...data.recurring.map(r=>({...r,id:'v-'+r.id,date:`${y}-${pad(m+1)}-${pad(Math.min(days,Math.max(1,+r.day||1)))}`,virtual:true}))]}function dateTx(s){let[y,m]=s.split('-').map(Number);return monthTx(y,m-1).filter(x=>x.date===s)}function stockValue(x){return(Number(x.currentPrice)||0)*(Number(x.shares)||0)}function stockCost(x){return(Number(x.costPrice)||0)*(Number(x.shares)||0)}function stockGain(x){return stockValue(x)-stockCost(x)}function totals(){let a=monthTx(new Date().getFullYear(),new Date().getMonth());return{cash:sum(data.cash,'amount'),invest:data.invest.reduce((s,x)=>s+stockValue(x),0),points:sum(data.points,'amount'),income:sum(a.filter(x=>x.type==='income'),'amount'),expense:sum(a.filter(x=>x.type==='expense'),'amount')}}
-function render(){let t=totals();document.querySelector('#app').innerHTML=`<header class="head"><div><div class="title">資産台帳</div><div class="sub">個人資産管理プロトタイプ（手動入力＋株価連携）</div></div><div class="stamp">${new Date().getMonth()+1}月</div></header><nav class="tabs">${[['summary','サマリー'],['invest','投資'],['cashflow','収支'],['calendar','カレンダー']].map(x=>`<button class="${tab===x[0]?'active':''}" onclick="tab='${x[0]}';edit=null;render()">${x[1]}</button>`).join('')}</nav>${tab==='summary'?summary(t):tab==='invest'?investView():tab==='cashflow'?cashView():calendar()}<div class="note">データはこの端末のブラウザに自動保存されます。株価取得は外部APIの制限時にサンプル値へ切り替わります。</div>${selected?dayModal():''}${edit?editModal():''}`}
-function balance(y,m,label){let a=monthTx(y,m),i=sum(a.filter(x=>x.type==='income'),'amount'),e=sum(a.filter(x=>x.type==='expense'),'amount'),n=i-e;return`<section class="balance ${n<0?'negative':''}"><div class="label">${label}のトータル収支</div><div class="balance-value ${n>=0?'pos':'neg'}">${signed(n)}</div><div class="balance-sub"><span class="label">収入<br><b class="pos">${yen(i)}</b></span><span class="label" style="text-align:right">支出（固定費込み）<br><b class="neg">${yen(e)}</b></span></div></section>`}
-function summary(t){let mx=Math.max(t.income,t.expense,1);return`<section class="card"><div class="hero-label">総資産（現金 + 株式評価額）</div><div class="hero-value">${yen(t.cash+t.invest)}</div><div class="sub">評価額ベース・${new Date().toLocaleDateString('ja-JP')}</div></section><div class="section"><span>ポイント・マイル残高</span><small>合計 ${t.points.toLocaleString('ja-JP')} pt / mile</small></div><div class="list">${data.points.map(x=>row(`${esc(x.name)}<div class="meta"><span class="tag">${esc(x.type)}</span></div>`,`${Number(x.amount).toLocaleString('ja-JP')}<span class="meta"> ${x.type==='マイル'?'mile':'pt'}</span>`,`openEdit('point','${x.id}')`)).join('')||empty()}</div><button class="add" onclick="openEdit('point','new')">＋ ポイント・マイルを追加</button>${balance(new Date().getFullYear(),new Date().getMonth(),'今月')}<div class="section"><span>現金（口座残高）</span><small>${yen(t.cash)}</small></div><div class="list">${data.cash.map(x=>row(esc(x.name),yen(x.amount),`openEdit('cash','${x.id}')`)).join('')||empty()}</div><button class="add" onclick="openEdit('cash','new')">＋ 口座を追加</button><div class="section"><span>投資（現在評価額）</span><small>${yen(t.invest)}</small></div><div class="list">${data.invest.map(x=>{let g=stockGain(x),p=stockCost(x)?g/stockCost(x)*100:0;return row(`${esc(x.name)}<div class="meta"><span class="tag">${esc(x.type)}</span><span class="ticker">${esc(x.ticker||'コード未設定')}</span></div>`,`${yen(stockValue(x))}<div class="meta ${g>=0?'pos':'neg'}">${signed(g)} (${p>=0?'+':''}${p.toFixed(1)}%)</div>`,`openEdit('invest','${x.id}')`)}).join('')||empty()}</div><button class="add" onclick="tab='invest';render()">銘柄の内訳・チャートを見る →</button><div class="section"><span>今月の収支</span></div><div class="label">収入　${yen(t.income)}<div class="bar"><div class="fill income" style="width:${t.income/mx*100}%"></div></div></div><br><div class="label">支出　${yen(t.expense)}<div class="bar"><div class="fill expense" style="width:${t.expense/mx*100}%"></div></div></div>${pie()}${portfolioChart()}`}
-function pie(){let a=monthTx(new Date().getFullYear(),new Date().getMonth()).filter(x=>x.type==='expense'),m={};a.forEach(x=>m[x.virtual?'固定費':x.name]=(m[x.virtual?'固定費':x.name]||0)+Number(x.amount));let cats=Object.entries(m).sort((a,b)=>b[1]-a[1]),total=cats.reduce((s,x)=>s+x[1],0);if(!cats.length)return'';let colors=['#3e6c58','#a2402f','#ad8a3c','#3d5a73','#7a4b6b'],r=52,c=2*Math.PI*r,o=0,circles=cats.map((x,i)=>{let d=x[1]/total*c,s=`<circle cx="65" cy="65" r="${r}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="22" stroke-dasharray="${d} ${c-d}" stroke-dashoffset="${-o}" transform="rotate(-90 65 65)"/>`;o+=d;return s}).join('');return`<div class="section"><span>支出の内訳</span></div><section class="card pie"><svg width="130" height="130" viewBox="0 0 130 130">${circles}<text x="65" y="68" text-anchor="middle" font-size="11" fill="var(--ink)">${yen(total)}</text></svg><div class="legend">${cats.map((x,i)=>`<div><i style="background:${colors[i%colors.length]}"></i>${esc(x[0])} ${Math.round(x[1]/total*100)}%</div>`).join('')}</div></section>`}
-function portfolioChart(){let rows=data.invest.map(x=>({name:x.name,value:stockValue(x)})).filter(x=>x.value>0);if(!rows.length)return'';let max=Math.max(...rows.map(x=>x.value)),w=360,h=170,bw=Math.max(18,Math.min(48,w/rows.length-12)),gap=(w-bw*rows.length)/(rows.length+1);return`<div class="section"><span>ポートフォリオ評価額</span><small>銘柄別</small></div><section class="chart-card"><div class="chart-title">現在の評価額比較</div><div class="chart-wrap"><svg viewBox="0 0 ${w} ${h}"><line x1="0" y1="145" x2="${w}" y2="145" stroke="#26333e18"/>${rows.map((x,i)=>{let bh=x.value/max*120,xp=gap+i*(bw+gap),yp=145-bh;return`<rect x="${xp}" y="${yp}" width="${bw}" height="${bh}" rx="7" fill="${i%2?'#7ca694':'#3e6c58'}"/><text x="${xp+bw/2}" y="${yp-6}" text-anchor="middle" font-size="9" fill="var(--ink)">${Math.round(x.value/10000)}万</text><text x="${xp+bw/2}" y="160" text-anchor="middle" font-size="8" fill="var(--soft)">${esc(x.name.slice(0,6))}</text>`}).join('')}</svg></div><div class="chart-help">評価額 = 現在株価 × 保有株数</div></section>`}
-function row(a,b,c){return`<div class="row" onclick="${c}"><div class="name">${a}</div><div class="amount">${b}</div></div>`}function empty(){return'<div class="empty">データがありません</div>'}
-function investView(){let a=data.invest.filter(x=>filter==='all'||x.type===filter);return`<div class="pills"><button class="pill ${filter==='all'?'active':''}" onclick="filter='all';render()">すべて</button><button class="pill ${filter==='NISA'?'active':''}" onclick="filter='NISA';render()">NISA</button><button class="pill ${filter==='株式'?'active':''}" onclick="filter='株式';render()">株式</button></div><div class="list">${a.map(x=>{let g=stockGain(x),p=stockCost(x)?g/stockCost(x)*100:0;return row(`${esc(x.name)}<div class="meta"><span class="tag">${esc(x.type)}</span><span class="ticker">${esc(x.ticker||'コード未設定')}</span><br>保有 ${Number(x.shares).toLocaleString()}株 × ${yen(x.currentPrice)}</div>`,`<span class="${g>=0?'pos':'neg'}">${signed(g)}<br>${p>=0?'+':''}${p.toFixed(1)}%</span>`,`openEdit('invest','${x.id}')`)}).join('')||empty()}</div><button class="add" onclick="openEdit('invest','new')">＋ 銘柄を追加</button>${portfolioChart()}`}
-function cashView(){let a=monthTx(new Date().getFullYear(),new Date().getMonth()).sort((x,y)=>y.date.localeCompare(x.date)),i=sum(a.filter(x=>x.type==='income'),'amount'),e=sum(a.filter(x=>x.type==='expense'),'amount');return`<div class="summary"><div><span class="sub">収入</span><b class="pos">${yen(i)}</b></div><div><span class="sub">支出</span><b class="neg">${yen(e)}</b></div><div><span class="sub">差引</span><b>${signed(i-e)}</b></div></div><div class="section"><span>固定費（毎月自動計上）</span></div><div class="list">${data.recurring.map(x=>row(`${esc(x.name)}<div class="meta">毎月${x.day}日・${x.type==='income'?'収入':'支出'} ${esc(x.memo||'')}</div>`,`<span class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</span>`,`openEdit('rec','${x.id}')`)).join('')||empty()}</div><button class="add" onclick="openEdit('rec','new')">＋ 固定費を追加</button><div class="section"><span>今月の取引一覧</span><small>タップで中央に編集</small></div><div class="list">${a.map(x=>row(`<div class="meta">${x.date.slice(5)}</div>${x.virtual?'<span class="tag">固定費</span>':''}${esc(x.name)}${x.accountId?`<div class="meta">入出金先：${esc(data.cash.find(c=>c.id===x.accountId)?.name||'')}</div>`:''}`,`<span class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</span>`,x.virtual?`openEdit('rec','${x.id.slice(2)}')`:`openEdit('tx','${x.id}')`)).join('')||empty()}</div><button class="add" onclick="openEdit('tx','new')">＋ 収入・支出を追加</button>`}
-function calendar(){let first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),by={};monthTx().forEach(x=>{let d=+x.date.slice(8);by[d]=(by[d]||0)+(x.type==='income'?+x.amount:-x.amount)});let cells=Array(first).fill(null).concat([...Array(days)].map((_,i)=>i+1));return`${balance(year,month,`${year}年${month+1}月`)}<div class="calendar-nav"><button onclick="month--;if(month<0){month=11;year--}render()">‹ 前月</button><div class="cal-title">${year}年${month+1}月</div><button onclick="month++;if(month>11){month=0;year++}render()">翌月 ›</button></div><div class="grid">${['日','月','火','水','木','金','土'].map(x=>`<div class="weekday">${x}</div>`).join('')}${cells.map(d=>d?`<div class="day ${`${year}-${pad(month+1)}-${pad(d)}`===today()?'today':''}" onclick="selected='${year}-${pad(month+1)}-${pad(d)}';render()"><b>${d}</b>${by[d]!==undefined?`<span class="net ${by[d]>=0?'pos':'neg'}">${by[d]>0?'+':''}${Math.round(by[d]/1000)}k</span>`:''}</div>`:'<div></div>').join('')}</div><div class="section"><span>日付をタップすると内訳を確認・入力できます</span></div>`}
-function openEdit(sec,id){edit={sec,id};render()}function closeEdit(){edit=null;render()}function editModal(){return`<div class="overlay modal" onclick="if(event.target===this)closeEdit()"><div class="form">${form()}</div></div>`}
-function form(){let{sec,id}=edit,arr=sec==='cash'?data.cash:sec==='invest'?data.invest:sec==='point'?data.points:sec==='tx'?data.tx:data.recurring,x=id==='new'?null:arr.find(a=>a.id===id),isTx=sec==='tx',isRec=sec==='rec',isPoint=sec==='point',typ=x?.type||kind;return`<div class="form-head"><h3>${x?'項目を編集':sec==='invest'?'銘柄を追加':sec==='point'?'ポイント・マイルを追加':sec==='tx'?'収入・支出を追加':'項目を追加'}</h3><button class="close" onclick="closeEdit()">×</button></div>${x?`<button class="delete" onclick="removeItem('${sec}','${x.id}')">削除</button>`:''}${isTx||isRec?`<div class="field"><label>区分</label><div class="toggle"><button class="${typ==='income'?'income':''}" onclick="kind='income';render()">収入</button><button class="${typ==='expense'?'expense':''}" onclick="kind='expense';render()">支出</button></div></div>`:''}${isTx?`<div class="field"><label>日付</label><input id="date" type="date" value="${x?.date||today()}"></div>`:''}<div class="field"><label>${sec==='cash'?'口座名':sec==='invest'?'銘柄名':isPoint?'サービス名':'項目名'}</label><input id="name" value="${esc(x?.name||'')}" placeholder="入力してください"></div>${sec==='invest'?`<div class="field"><label>区分</label><select id="type"><option ${x?.type==='NISA'?'selected':''}>NISA</option><option ${x?.type==='株式'?'selected':''}>株式</option></select></div><div class="field"><label>ティッカーコード</label><input id="ticker" value="${esc(x?.ticker||'')}" placeholder="例：7203.T / AAPL"></div><div class="field"><label>保有株数</label><input id="shares" type="number" step="any" value="${x?.shares??''} "></div><div class="field"><label>取得単価（1株）</label><input id="cost" type="number" step="any" value="${x?.costPrice??''}"></div><div class="field"><label>現在株価（自動取得値・手動修正可）</label><input id="current" type="number" step="any" value="${x?.currentPrice??''}"><div class="hint">ティッカーを入力して「最新株価を取得」を押すと更新します。</div><button class="add" onclick="fetchQuote('${id}')">${quoteBusy?'取得中…':'↻ 最新株価を取得'}</button>${x?.priceUpdated?`<div class="status">最終更新：${esc(x.priceUpdated)}</div>`:''}</div>`:''}${isPoint?`<div class="field"><label>種類</label><select id="ptype"><option ${x?.type==='ポイント'?'selected':''}>ポイント</option><option ${x?.type==='マイル'?'selected':''}>マイル</option></select></div>`:''}<div class="field"><label>${sec==='cash'?'残高':sec==='invest'?'（自動計算）':isPoint?'残高':'金額'}${isPoint?'（pt/mile）':'（円）'}</label>${sec==='invest'?`<div class="label">評価額　${yen(x?stockValue(x):0)}　/　評価損益 <span class="${x&&stockGain(x)>=0?'pos':'neg'}">${x?signed(stockGain(x)):'¥0'}</span></div>`:`<input id="amount" type="number" value="${x?.amount??''}">`}</div>${sec==='invest'?'':isTx?`<div class="field"><label>入出金先の口座（残高に反映）</label><select id="account"><option value="">口座を選択しない</option>${data.cash.map(c=>`<option value="${c.id}" ${x?.accountId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div><div class="field"><label>メモ</label><input id="memo" value="${esc(x?.memo||'')}"></div>`:''}${isRec?`<div class="field"><label>引き落とし日（毎月）</label><input id="day" type="number" min="1" max="31" value="${x?.day||1}"></div><div class="field"><label>メモ</label><input id="memo" value="${esc(x?.memo||'')}"></div>`:''}<div class="actions"><button class="ghost" onclick="closeEdit()">キャンセル</button><button class="primary" onclick="submit()">保存</button></div>`}
-async function fetchQuote(id){let x=id==='new'?null:data.invest.find(a=>a.id===id),ticker=document.querySelector('#ticker')?.value.trim();if(!ticker){alert('ティッカーコードを入力してください');return}quoteBusy=true;render();try{let symbol=encodeURIComponent(ticker),url=`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=6mo&interval=1d`;let res=await fetch(url);if(!res.ok)throw Error('API');let j=await res.json(),r=j.chart.result?.[0];if(!r)throw Error('データなし');let q=r.indicators.quote[0],prices=q.close.map(Number).filter(Number.isFinite),last=prices[prices.length-1];if(id==='new'){edit={sec:'invest',id:'new'};render();document.querySelector('#ticker').value=ticker}x=id==='new'?null:data.invest.find(a=>a.id===id);if(x){x.currentPrice=last;x.history=prices.slice(-60);x.priceUpdated=new Date().toLocaleString('ja-JP');save()}quoteBusy=false;render()}catch(e){quoteBusy=false;render();alert('株価を取得できませんでした。CORS制限のため、現在株価を手動入力するか、コードを保存して後で再試行してください。')}}
-function effect(t){return t.type==='income'?Number(t.amount):-Number(t.amount)}function reverseApplied(t){if(!t||!t.applied||!t.accountId)return;let c=data.cash.find(x=>x.id===t.accountId);if(c)c.amount-=effect(t)}function apply(t){if(!t.accountId)return;let c=data.cash.find(x=>x.id===t.accountId);if(c)c.amount+=effect(t);t.applied=true}
-function submit(){let{sec,id}=edit,arr=sec==='cash'?data.cash:sec==='invest'?data.invest:sec==='point'?data.points:sec==='tx'?data.tx:data.recurring,x=id==='new'?{id:uid()}:arr.find(a=>a.id===id);if(sec==='tx'&&id!=='new')reverseApplied(x);x.name=document.querySelector('#name').value.trim();if(!x.name)return;if(sec==='invest'){x.type=document.querySelector('#type').value;x.ticker=document.querySelector('#ticker').value.trim();x.shares=+document.querySelector('#shares').value||0;x.costPrice=+document.querySelector('#cost').value||0;x.currentPrice=+document.querySelector('#current').value||x.costPrice;x.amount=stockValue(x);x.gain=stockGain(x)}else{x.amount=+document.querySelector('#amount').value||0}if(sec==='point')x.type=document.querySelector('#ptype').value;if(sec==='tx'){x.type=kind;x.date=document.querySelector('#date').value||today();x.accountId=document.querySelector('#account').value;x.memo=document.querySelector('#memo').value;x.applied=false;apply(x)}if(sec==='rec'){x.type=kind;x.day=Math.min(31,Math.max(1,+document.querySelector('#day').value||1));x.memo=document.querySelector('#memo').value}if(id==='new')arr.push(x);save();closeEdit()}
-function removeItem(sec,id){let arr=sec==='cash'?data.cash:sec==='invest'?data.invest:sec==='point'?data.points:sec==='tx'?data.tx:data.recurring,x=arr.find(a=>a.id===id);if(sec==='tx')reverseApplied(x);let i=arr.indexOf(x);if(i>=0)arr.splice(i,1);save();closeEdit()}
-function dayModal(){let a=dateTx(selected),i=sum(a.filter(x=>x.type==='income'),'amount'),e=sum(a.filter(x=>x.type==='expense'),'amount'),[y,m,d]=selected.split('-');return`<div class="overlay sheet-overlay" onclick="if(event.target===this){selected=null;render()}"><div class="form sheet"><div class="form-head"><h3>${m}月${d}日</h3><button class="close" onclick="selected=null;render()">×</button></div><p class="label">収入 <b class="pos">${yen(i)}</b>　支出 <b class="neg">${yen(e)}</b>　差引 <b>${signed(i-e)}</b></p><div class="list">${a.map(x=>`<div class="row"><div class="name">${x.virtual?'<span class="tag">固定費</span>':''}${esc(x.name)}</div><b class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</b></div>`).join('')||empty()}</div><button class="add" onclick="selected=null;openEdit('tx','new')">＋ この日の収入・支出を追加</button></div></div>`}
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資産台帳 | 個人資産管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#efeae0;--paper2:#e7dfcf;--ink:#26333e;--soft:#5c6b73;--faint:#8b9299;
+  --seal:#a2402f;--jade:#3e6c58;--gold:#ad8a3c;--blue:#3d5a73;--card:#fbf8f1;--line:#26333e12;--shadow:0 6px 22px #26333e18
+}
+*{box-sizing:border-box}html,body{margin:0}body{min-height:100vh;background:linear-gradient(180deg,var(--paper),var(--paper2));color:var(--ink);font-family:'Noto Sans JP',sans-serif}button,input,select{font:inherit}button{cursor:pointer}#app{max-width:460px;margin:auto;padding:20px 16px 50px}.header{display:flex;justify-content:space-between;margin-bottom:20px}.title{font:800 25px 'Shippori Mincho',serif;letter-spacing:.04em}.sub,.meta,.hint,.status{font-size:11px;color:var(--soft)}.stamp{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--seal);color:#fff;font-weight:700;transform:rotate(-6deg)}.tabs{display:flex;gap:3px;padding:4px;background:#26333e0d;border-radius:14px;margin-bottom:20px}.tabs button,.pill{flex:1;border:0;border-radius:11px;padding:9px 3px;background:transparent;color:var(--soft);font-size:11.5px}.tabs button.active,.pill.active,.primary{background:var(--ink);color:var(--paper)}.card,.list,.summary,.balance,.chart-card{background:var(--card);border-radius:18px;box-shadow:var(--shadow)}.card,.chart-card{padding:18px 20px}.hero-label,.label{font-size:12px;color:var(--soft)}.hero-value{font:800 34px 'Shippori Mincho',serif;margin:5px 0}.section{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 10px;font-size:13px;font-weight:700;color:var(--soft)}.section small{font-size:11px;font-weight:400;color:var(--faint)}.list{overflow:hidden}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background .15s}.row:nth-child(even){background:#26333e06}.row:hover,.row:active{background:#26333e12}.name{font-size:14px}.amount{text-align:right;font-size:15px;font-weight:700;white-space:nowrap}.pos{color:var(--jade)}.neg{color:var(--seal)}.blue{color:var(--blue)}.tag{display:inline-block;padding:2px 7px;border-radius:99px;background:#ad8a3c29;color:var(--gold);font-size:9px;margin-right:5px}.ticker{font-size:10px;color:var(--blue);margin-left:5px}.add{width:100%;border:0;border-radius:13px;margin-top:12px;padding:12px;background:#26333e0d;color:var(--soft);font-weight:600}.balance{padding:18px 20px;margin:18px 0;background:linear-gradient(135deg,#3e6c5829,#fbf8f1)}.balance.negative{background:linear-gradient(135deg,#a2402f29,#fbf8f1)}.balance-value{font:800 30px 'Shippori Mincho',serif;margin:4px 0}.balance-sub{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:11px;margin-top:12px}.summary{display:flex;text-align:center;padding:14px 4px}.summary>div{flex:1}.summary b{display:block;margin-top:4px}.pills{display:flex;gap:6px;margin-bottom:10px}.pill{flex:initial;padding:6px 14px;background:#26333e0d}.bar{height:8px;border-radius:99px;background:#26333e12;overflow:hidden;margin-top:6px}.fill{height:100%;border-radius:99px}.fill.income{background:#7ca694}.fill.expense{background:#c97a65}.empty{text-align:center;color:var(--faint);font-size:12px;padding:18px}.note{text-align:center;color:var(--faint);font-size:10.5px;margin-top:28px;line-height:1.6}.chart-card{margin-top:14px}.chart-title{font-size:13px;font-weight:700;color:var(--soft);margin-bottom:10px}.chart-wrap{width:100%;height:190px}.chart-wrap svg{width:100%;height:100%;overflow:visible}.chart-help{font-size:10px;color:var(--faint);margin-top:8px}.payment-box{padding:10px 12px;border-radius:12px;background:#26333e0b;margin-top:10px}.payment-box small{display:block;color:var(--soft);margin-bottom:4px}.payment-line{display:flex;justify-content:space-between;align-items:center;gap:10px}.payment-pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#3d5a73;color:white;font-size:10px}.form{width:min(100%,430px);max-height:90vh;overflow:auto;background:var(--card);padding:20px;border-radius:20px;box-shadow:0 10px 35px #26333e38}.form-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.form h3{font-size:15px;margin:0}.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--soft);margin-bottom:5px}.field input,.field select{width:100%;border:0;border-radius:11px;padding:11px 12px;background:#26333e0b;color:var(--ink)}.field input:focus,.field select:focus{outline:2px solid var(--ink)}.actions{display:flex;gap:8px;margin-top:16px}.actions button{flex:1;border:0;border-radius:13px;padding:11px}.ghost{background:#26333e0d}.delete{border:0;border-radius:9px;padding:6px 10px;color:var(--seal);background:#a2402f18}.close{border:0;border-radius:50%;width:30px;height:30px}.toggle{display:flex;gap:4px;padding:4px;background:#26333e0b;border-radius:12px}.toggle button{flex:1;border:0;border-radius:9px;padding:8px;background:transparent}.toggle .income{background:var(--jade);color:#fff}.toggle .expense{background:var(--seal);color:#fff}.overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:18px;background:#26333e73;animation:fade .18s ease}.modal{animation:pop .2s ease}.sheet-overlay{align-items:flex-end;padding:0}.sheet{border-radius:22px 22px 0 0;max-height:86vh}.calendar-nav{display:flex;align-items:center;justify-content:space-between;margin:18px 0}.calendar-nav button{border:0;border-radius:10px;background:#26333e0d;padding:7px 14px;color:var(--ink)}.cal-title{font:700 17px 'Shippori Mincho',serif}.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.weekday{text-align:center;font-size:10px;color:var(--faint);padding-bottom:5px}.day{aspect-ratio:1;border-radius:11px;background:#26333e09;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px}.day.today{box-shadow:inset 0 0 0 2px var(--ink)}.day .net{font-size:8.5px;margin-top:3px;font-weight:700}.pie{display:flex;align-items:center;gap:18px;justify-content:center}.legend{font-size:11px;line-height:1.9}.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}@media(max-width:360px){#app{padding-left:12px;padding-right:12px}.title{font-size:22px}.row{padding-left:12px;padding-right:12px}}</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const STORAGE_KEY='asset-ledger-payment-v1';
+const pad=n=>String(n).padStart(2,'0');
+const uid=()=>Math.random().toString(36).slice(2)+Date.now();
+const yen=n=>'¥'+Math.round(Number(n)||0).toLocaleString('ja-JP');
+const signed=n=>(n>0?'+':n<0?'-':'')+yen(Math.abs(n));
+const today=()=>{const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sum=(arr,key)=>arr.reduce((a,x)=>a+(Number(x[key])||0),0);
+
+const PAYMENT_OPTIONS=[
+  '未設定','クレジットカード','口座振替','現金','PayPay','楽天ペイ','その他QR決済','その他'
+];
+
+function seed(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=pad(d.getMonth()+1);
+  const month=`${y}-${m}`;
+
+  return {
+    cash:[['普通預金（メインバンク）',850000],['給与振込口座',320000],['貯蓄預金',1200000]].map(x=>({id:uid(),name:x[0],amount:x[1]})),
+    invest:[['eMAXIS Slim 全世界株式','NISA','ACWI',10,98000],['eMAXIS Slim 米国株式(S&P500)','NISA','VOO',5,177000],['トヨタ自動車','株式','7203.T',100,3000],['ソニーグループ','株式','6758.T',50,6200]].map(x=>({
+      id:uid(),name:x[0],type:x[1],ticker:x[2],shares:x[3],costPrice:x[4],currentPrice:x[4],history:[],priceUpdated:''
+    })),
+    points:[['楽天ポイント','ポイント',12000],['Vポイント','ポイント',3500],['ANAマイル','マイル',18500]].map(x=>({id:uid(),name:x[0],type:x[1],amount:x[2]})),
+    tx:[['給与',380000,'income',5],['副業収入',25000,'income',20],['食費',12000,'expense',6],['光熱費',14000,'expense',10],['交際費',18000,'expense',15],['食費',15000,'expense',18],['その他',12000,'expense',22],['食費',15000,'expense',25],['タクシー',4200,'expense',16],['美容室',9600,'expense',8]].map(x=>({
+      id:uid(),name:x[0],amount:x[1],type:x[2],date:`${month}-${pad(x[3])}`,memo:'',accountId:'',payment:'クレジットカード',applied:false
+    })),
+    recurring:[['家賃',95000,2,'口座振替'],['通信費（携帯・ネット）',8500,12,''],['Netflix',1980,27,'サブスク']].map(x=>({
+      id:uid(),name:x[0],amount:x[1],day:x[2],memo:x[3],type:'expense',payment:'口座振替'
+    }))
+  };
+}
+
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+    if(saved)return saved;
+  }catch(e){ }
+  return seed();
+}
+
+let data=loadData();
+let tab='summary';
+let filter='all';
+let modal=null;
+let transactionType='expense';
+let selectedDate=null;
+let calendarYear=new Date().getFullYear();
+let calendarMonth=new Date().getMonth();
+let quoteLoading=false;
+
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
+
+function stockCost(s){return Number(s.shares||0)*Number(s.costPrice||0);}
+function stockValue(s){return Number(s.shares||0)*Number(s.currentPrice||0);}
+function stockGain(s){return stockValue(s)-stockCost(s);}
+function stockGainRate(s){const cost=stockCost(s); return cost ? stockGain(s)/cost*100 : 0;}
+
+function monthTransactions(y=calendarYear,m=calendarMonth){
+  const monthKey=`${y}-${pad(m+1)}`;
+  const days=new Date(y,m+1,0).getDate();
+  const actual=data.tx.filter(x=>x.date.startsWith(monthKey));
+  const fixed=data.recurring.map(rule=>({
+    ...rule,
+    id:'virtual-'+rule.id,
+    virtual:true,
+    date:`${y}-${pad(m+1)}-${pad(Math.min(days,Math.max(1,Number(rule.day)||1)))}`
+  }));
+  return [...actual,...fixed];
+}
+
+function dateTransactions(date){
+  const [y,m]=date.split('-').map(Number);
+  return monthTransactions(y,m-1).filter(x=>x.date===date);
+}
+
+function totals(){
+  const current=monthTransactions(new Date().getFullYear(),new Date().getMonth());
+  return {
+    cash:sum(data.cash,'amount'),
+    invest:data.invest.reduce((a,x)=>a+stockValue(x),0),
+    points:sum(data.points,'amount'),
+    income:sum(current.filter(x=>x.type==='income'),'amount'),
+    expense:sum(current.filter(x=>x.type==='expense'),'amount')
+  };
+}
+
+function render(){
+  const t=totals();
+  document.querySelector('#app').innerHTML=`
+    <header class="header">
+      <div>
+        <div class="title">資産台帳</div>
+        <div class="sub">個人資産管理プロトタイプ</div>
+      </div>
+      <div class="stamp">${new Date().getMonth()+1}月</div>
+    </header>
+
+    <nav class="tabs">
+      ${[['summary','サマリー'],['invest','投資'],['cashflow','収支'],['calendar','カレンダー']].map(x=>`<button class="${tab===x[0]?'active':''}" onclick="tab='${x[0]}';modal=null;render()">${x[1]}</button>`).join('')}
+    </nav>
+
+    ${tab==='summary'?renderSummary(t):tab==='invest'?renderInvestments():tab==='cashflow'?renderCashflow():renderCalendar()}
+
+    <div class="note">データはこの端末のブラウザに保存されます。支払い方法は支出ごとに設定できます。</div>
+    ${selectedDate?renderDayModal():''}
+    ${modal?renderEditModal():''}
+  `;
+}
+
+function renderSummary(t){
+  const max=Math.max(t.income,t.expense,1);
+
+  return `
+    <section class="card">
+      <div class="hero-label">総資産（現金 + 株式評価額）</div>
+      <div class="hero-value">${yen(t.cash+t.invest)}</div>
+      <div class="sub">評価額ベース・${new Date().toLocaleDateString('ja-JP')}</div>
+    </section>
+
+    ${renderPoints()}
+    ${renderBalance(new Date().getFullYear(),new Date().getMonth(),'今月')}
+    ${renderPaymentSummary()}
+
+    <div class="section"><span>現金（口座残高）</span><small>${yen(t.cash)}</small></div>
+    <div class="list">${data.cash.map(x=>renderRow(escapeHtml(x.name),yen(x.amount),`openModal('cash','${x.id}')`)).join('')||empty()}</div>
+    <button class="add" onclick="openModal('cash','new')">＋ 口座を追加</button>
+
+    <div class="section"><span>投資（現在評価額）</span><small>${yen(t.invest)}</small></div>
+    <div class="list">${data.invest.map(x=>{const gain=stockGain(x),rate=stockGainRate(x); return renderRow(`${escapeHtml(x.name)}<div class="meta"><span class="tag">${escapeHtml(x.type)}</span><span class="ticker">${escapeHtml(x.ticker||'コード未設定')}</span></div>`, `${yen(stockValue(x))}<div class="meta ${gain>=0?'pos':'neg'}">${signed(gain)} (${rate>=0?'+':''}${rate.toFixed(1)}%)</div>`, `openModal('invest','${x.id}')`);}).join('')||empty()}</div>
+    <button class="add" onclick="tab='invest';render()">銘柄の内訳・チャートを見る →</button>
+
+    <div class="section"><span>今月の収支</span></div>
+    <div class="label">収入　${yen(t.income)}<div class="bar"><div class="fill income" style="width:${t.income/max*100}%"></div></div></div><br>
+    <div class="label">支出　${yen(t.expense)}<div class="bar"><div class="fill expense" style="width:${t.expense/max*100}%"></div></div></div>
+
+    ${renderExpensePie()}
+    ${renderPortfolioChart()}
+  `;
+}
+
+function renderPoints(){
+  const total=sum(data.points,'amount');
+  return `
+    <div class="section"><span>ポイント・マイル残高</span><small>合計 ${total.toLocaleString('ja-JP')}</small></div>
+    <div class="list">${data.points.map(x=>renderRow(`${escapeHtml(x.name)}<div class="meta"><span class="tag">${escapeHtml(x.type)}</span></div>`, `${Number(x.amount).toLocaleString('ja-JP')}<span class="meta"> ${x.type==='マイル'?'mile':'pt'}</span>`, `openModal('point','${x.id}')`)).join('')||empty()}</div>
+    <button class="add" onclick="openModal('point','new')">＋ ポイント・マイルを追加</button>
+  `;
+}
+
+function renderBalance(y,m,label){
+  const tx=monthTransactions(y,m);
+  const income=sum(tx.filter(x=>x.type==='income'),'amount');
+  const expense=sum(tx.filter(x=>x.type==='expense'),'amount');
+  const net=income-expense;
+  return `
+    <section class="balance ${net<0?'negative':''}">
+      <div class="label">${label}のトータル収支</div>
+      <div class="balance-value ${net>=0?'pos':'neg'}">${signed(net)}</div>
+      <div class="balance-sub">
+        <span class="label">収入<br><b class="pos">${yen(income)}</b></span>
+        <span class="label" style="text-align:right">支出（固定費込み）<br><b class="neg">${yen(expense)}</b></span>
+      </div>
+    </section>
+  `;
+}
+
+function renderPaymentSummary(){
+  const monthly=monthTransactions(new Date().getFullYear(),new Date().getMonth()).filter(x=>x.type==='expense');
+  const paymentMap={};
+  monthly.forEach(x=>{
+    const method=x.payment||'未設定';
+    paymentMap[method]=(paymentMap[method]||0)+Number(x.amount);
+  });
+  const entries=Object.entries(paymentMap).sort((a,b)=>b[1]-a[1]);
+  const total=entries.reduce((a,[,v])=>a+v,0)||1;
+
+  return `
+    <div class="section"><span>支払い方法別支出</span><small>今月</small></div>
+    <div class="list">${entries.map(([method,totalAmount])=>renderRow(
+      `<span class="payment-pill" style="background:${method==='クレジットカード'?'#3d5a73':method==='現金'?'#ad8a3c':method==='PayPay' || method==='楽天ペイ'?'#3e6c58':method==='口座振替'?'#5c6b73':'#8b9299'}">${escapeHtml(method)}</span>`,
+      `${yen(totalAmount)}<div class="meta">${Math.round(totalAmount/total*100)}%</div>`,
+      `alert('${escapeHtml(method)}での支出: ${yen(totalAmount)}')`
+    )).join('')||empty()}</div>
+  `;
+}
+
+function renderExpensePie(){
+  const monthly=monthTransactions(new Date().getFullYear(),new Date().getMonth()).filter(x=>x.type==='expense');
+  const byMethod={};
+  monthly.forEach(x=>{ const method=x.payment||'未設定'; byMethod[method]=(byMethod[method]||0)+Number(x.amount); });
+  const entries=Object.entries(byMethod).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length)return'';
+
+  const colors=['#3e6c58','#a2402f','#ad8a3c','#3d5a73','#7a4b6b','#5c6b73','#8b9299'];
+  const total=entries.reduce((a,[,v])=>a+v,0);
+  const radius=52;
+  const circumference=2*Math.PI*radius;
+  let offset=0;
+
+  const circles=entries.map(([method,val],i)=>{
+    const len=val/total*circumference;
+    const html=`<circle cx="65" cy="65" r="${radius}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="22" stroke-dasharray="${len} ${circumference-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 65 65)"/>`;
+    offset+=len;
+    return html;
+  }).join('');
+
+  return `
+    <div class="section"><span>支払い方法別の支出</span></div>
+    <section class="card pie">
+      <svg width="130" height="130" viewBox="0 0 130 130">${circles}<text x="65" y="68" text-anchor="middle" font-size="11">${yen(total)}</text></svg>
+      <div class="legend">${entries.map(([method,val],i)=>`<div><i style="background:${colors[i%colors.length]}"></i>${escapeHtml(method)} ${Math.round(val/total*100)}%</div>`).join('')}</div>
+    </section>
+  `;
+}
+
+function renderPortfolioChart(){
+  const values=data.invest.map(x=>({name:x.name,value:stockValue(x)})).filter(x=>x.value>0);
+  if(!values.length)return'';
+  const width=360,height=170,max=Math.max(...values.map(x=>x.value)),barWidth=Math.max(18,Math.min(46,width/values.length-12)),gap=(width-barWidth*values.length)/(values.length+1);
+  return `
+    <div class="section"><span>ポートフォリオ評価額</span><small>銘柄別</small></div>
+    <section class="chart-card">
+      <div class="chart-title">現在の評価額比較</div>
+      <div class="chart-wrap">
+        <svg viewBox="0 0 ${width} ${height}">
+          <line x1="0" y1="142" x2="${width}" y2="142" stroke="#26333e18"/>
+          ${values.map((x,i)=>{const h=x.value/max*115;const left=gap+i*(barWidth+gap);const top=142-h;return `<rect x="${left}" y="${top}" width="${barWidth}" height="${h}" rx="7" fill="${i%2?'#7ca694':'#3e6c58'}"/><text x="${left+barWidth/2}" y="${top-6}" text-anchor="middle" font-size="9">${Math.round(x.value/10000)}万</text><text x="${left+barWidth/2}" y="158" text-anchor="middle" font-size="8" fill="#5c6b73">${escapeHtml(x.name.slice(0,6))}</text>`}).join('')}
+        </svg>
+      </div>
+      <div class="chart-help">評価額 = 現在株価 × 保有株数</div>
+    </section>
+  `;
+}
+
+function renderInvestments(){
+  const list=data.invest.filter(x=>filter==='all'||x.type===filter);
+  return `
+    <div class="pills">
+      ${['all','NISA','株式'].map(x=>`<button class="pill ${filter===x?'active':''}" onclick="filter='${x}';render()">${x==='all'?'すべて':x}</button>`).join('')}
+    </div>
+    <div class="list">${list.map(x=>{const gain=stockGain(x),rate=stockGainRate(x); return renderRow(`${escapeHtml(x.name)}<div class="meta"><span class="tag">${escapeHtml(x.type)}</span><span class="ticker">${escapeHtml(x.ticker||'コード未設定')}</span><br>保有 ${Number(x.shares).toLocaleString()}株 × ${yen(x.currentPrice)}</div>`, `<span class="${gain>=0?'pos':'neg'}">${signed(gain)}<br>${rate>=0?'+':''}${rate.toFixed(1)}%</span>`, `openModal('invest','${x.id}')`);}).join('')||empty()}</div>
+    <button class="add" onclick="openModal('invest','new')">＋ 銘柄を追加</button>
+    ${renderPortfolioChart()}
+    ${renderStockHistoryChart()}
+  `;
+}
+
+function renderStockHistoryChart(){
+  const stocks=data.invest.filter(x=>x.history&&x.history.length>1);
+  if(!stocks.length)return'';
+  const stock=stocks[0];
+  const values=stock.history;
+  const width=360,height=170,min=Math.min(...values),max=Math.max(...values),range=max-min||1;
+  const points=values.map((v,i)=>`${(i/(values.length-1))*width},${140-((v-min)/range)*115}`).join(' ');
+  return `
+    <div class="section"><span>株価チャート</span><small>${escapeHtml(stock.name)}</small></div>
+    <section class="chart-card">
+      <div class="chart-title">直近値動き</div>
+      <div class="chart-wrap"><svg viewBox="0 0 ${width} ${height}"><line x1="0" y1="140" x2="${width}" y2="140" stroke="#26333e18"/><polyline points="${points}" fill="none" stroke="#3d5a73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="chart-help">${escapeHtml(stock.ticker||'')} / 最新値 ${yen(stock.currentPrice)}</div>
+    </section>
+  `;
+}
+
+function renderCashflow(){
+  const tx=monthTransactions(new Date().getFullYear(),new Date().getMonth()).sort((a,b)=>b.date.localeCompare(a.date));
+  const income=sum(tx.filter(x=>x.type==='income'),'amount');
+  const expense=sum(tx.filter(x=>x.type==='expense'),'amount');
+  return `
+    <div class="summary"><div><span class="sub">収入</span><b class="pos">${yen(income)}</b></div><div><span class="sub">支出</span><b class="neg">${yen(expense)}</b></div><div><span class="sub">差引</span><b>${signed(income-expense)}</b></div></div>
+    <div class="section"><span>固定費（毎月自動計上）</span></div>
+    <div class="list">${data.recurring.map(x=>renderRow(`${escapeHtml(x.name)}<div class="meta">毎月${x.day}日・${x.type==='income'?'収入':'支出'} ${escapeHtml(x.memo||'')}</div>`, `<span class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</span>`, `openModal('rec','${x.id}')`)).join('')||empty()}</div>
+    <button class="add" onclick="openModal('rec','new')">＋ 固定費を追加</button>
+
+    <div class="section"><span>今月の取引一覧</span><small>タップで編集</small></div>
+    <div class="list">${tx.map(x=>renderRow(`<div class="meta">${x.date.slice(5)}</div>${x.virtual?'<span class="tag">固定費</span>':''}${escapeHtml(x.name)}${x.accountId?`<div class="meta">入出金先：${escapeHtml(data.cash.find(c=>c.id===x.accountId)?.name||'')}</div>`:''}<div class="meta">決済：${escapeHtml(x.payment||'未設定')}</div>`, `<span class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</span>`, x.virtual?`openModal('rec','${x.id.replace('virtual-','')}')`: `openModal('tx','${x.id}')`)).join('')||empty()}</div>
+    <button class="add" onclick="openModal('tx','new')">＋ 収入・支出を追加</button>
+    ${renderPaymentSummary()}
+  `;
+}
+
+function renderCalendar(){
+  const first=new Date(calendarYear,calendarMonth,1).getDay();
+  const days=new Date(calendarYear,calendarMonth+1,0).getDate();
+  const byDay={};
+  monthTransactions().forEach(x=>{const d=Number(x.date.slice(8)); byDay[d]=(byDay[d]||0)+(x.type==='income'?Number(x.amount):-Number(x.amount));});
+  const cells=Array(first).fill(null).concat([...Array(days)].map((_,i)=>i+1));
+
+  return `
+    ${renderBalance(calendarYear,calendarMonth,`${calendarYear}年${calendarMonth+1}月`)}
+    <div class="calendar-nav">
+      <button onclick="calendarMonth--; if(calendarMonth<0){calendarMonth=11; calendarYear--;} render()">‹ 前月</button>
+      <div class="cal-title">${calendarYear}年${calendarMonth+1}月</div>
+      <button onclick="calendarMonth++; if(calendarMonth>11){calendarMonth=0; calendarYear++;} render()">翌月 ›</button>
+    </div>
+    <div class="grid">${['日','月','火','水','木','金','土'].map(x=>`<div class="weekday">${x}</div>`).join('')}${cells.map(day=>{if(day===null)return'<div></div>'; const date=`${calendarYear}-${pad(calendarMonth+1)}-${pad(day)}`; const net=byDay[day]; return `<div class="day ${date===today()?'today':''}" onclick="selectedDate='${date}';render()"><b>${day}</b>${net!==undefined?`<span class="net ${net>=0?'pos':'neg'}">${net>0?'+':''}${Math.round(net/1000)}k</span>`:''}</div>`;}).join('')}</div>
+    <div class="section"><span>日付をタップすると明細を確認できます</span></div>
+  `;
+}
+
+function renderRow(left,right,action){
+  return `<div class="row" onclick="${action}"><div class="name">${left}</div><div class="amount">${right}</div></div>`;
+}
+
+function empty(){return '<div class="empty">データがありません</div>'};
+
+function openModal(section,id){modal={section,id};render();}
+function closeModal(){modal=null;render();}
+
+function renderEditModal(){
+  return `
+    <div class="overlay modal" onclick="if(event.target===this)closeModal()">
+      <div class="form">${renderForm()}</div>
+    </div>
+  `;
+}
+
+function renderForm(){
+  const section=modal.section;
+  const id=modal.id;
+  const arr=section==='cash'?data.cash:section==='invest'?data.invest:section==='point'?data.points:section==='tx'?data.tx:data.recurring;
+  const item=id==='new'?null:arr.find(x=>x.id===id);
+  const isTx=section==='tx';
+  const isRec=section==='rec';
+  const isPoint=section==='point';
+  const type=item?.type||transactionType;
+
+  return `
+    <div class="form-head">
+      <h3>${item?'項目を編集':section==='invest'?'銘柄を追加':section==='point'?'ポイント・マイルを追加':section==='tx'?'収入・支出を追加':'項目を追加'}</h3>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    ${item?`<button class="delete" onclick="deleteItem('${section}','${item.id}')">削除</button>`:''}
+
+    ${(isTx||isRec)?`<div class="field"><label>区分</label><div class="toggle"><button class="${type==='income'?'income':''}" onclick="transactionType='income';render()">収入</button><button class="${type==='expense'?'expense':''}" onclick="transactionType='expense';render()">支出</button></div></div>`:''}
+    ${isTx?`<div class="field"><label>日付</label><input id="date" type="date" value="${item?.date||today()}"></div>`:''}
+
+    <div class="field"><label>${section==='cash'?'口座名':section==='invest'?'銘柄名':isPoint?'サービス名':'項目名'}</label><input id="name" value="${escapeHtml(item?.name||'')}" placeholder="入力してください"></div>
+
+    ${section==='invest'?`<div class="field"><label>区分</label><select id="investType"><option ${item?.type==='NISA'?'selected':''}>NISA</option><option ${item?.type==='株式'?'selected':''}>株式</option></select></div><div class="field"><label>ティッカーコード</label><input id="ticker" value="${escapeHtml(item?.ticker||'')}" placeholder="例：7203.T / AAPL"></div><div class="field"><label>保有株数</label><input id="shares" type="number" step="any" value="${item?.shares??''}"></div><div class="field"><label>取得単価（1株）</label><input id="costPrice" type="number" step="any" value="${item?.costPrice??''}"></div><div class="field"><label>現在株価</label><input id="currentPrice" type="number" step="any" value="${item?.currentPrice??''}"><div class="hint">ティッカーを入力して「最新株価を取得」を押すと更新します。</div><button class="add" onclick="fetchQuote()">${quoteLoading?'取得中…':'↻ 最新株価を取得'}</button>${item?.priceUpdated?`<div class="status">最終更新：${escapeHtml(item.priceUpdated)}</div>`:''}</div>`:''}
+
+    ${isPoint?`<div class="field"><label>種類</label><select id="pointType"><option ${item?.type==='ポイント'?'selected':''}>ポイント</option><option ${item?.type==='マイル'?'selected':''}>マイル</option></select></div>`:''}
+
+    ${section!=='invest'?`<div class="field"><label>${section==='cash'?'残高':isPoint?'残高（pt/mile）':'金額（円）'}</label><input id="amount" type="number" value="${item?.amount??''}"></div>`:''}
+
+    ${(isTx||isRec)?`<div class="field"><label>支払い方法</label><select id="payment">${PAYMENT_OPTIONS.map(opt=>`<option value="${opt}" ${((item?.payment||'未設定')===opt)?'selected':''}>${opt}</option>`).join('')}</select></div>`:''}
+
+    ${isTx?`<div class="field"><label>入出金先の口座</label><select id="account"><option value="">口座を選択しない</option>${data.cash.map(c=>`<option value="${c.id}" ${(item?.accountId===c.id)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select></div><div class="field"><label>メモ</label><input id="memo" value="${escapeHtml(item?.memo||'')}"></div>`:''}
+    ${isRec?`<div class="field"><label>引き落とし日（毎月）</label><input id="day" type="number" min="1" max="31" value="${item?.day||1}"></div><div class="field"><label>メモ</label><input id="memo" value="${escapeHtml(item?.memo||'')}"></div>`:''}
+
+    <div class="actions"><button class="ghost" onclick="closeModal()">キャンセル</button><button class="primary" onclick="saveModal()">保存</button></div>
+  `;
+}
+
+async function fetchQuote(){
+  if(!modal||modal.section!=='invest')return;
+  const ticker=document.querySelector('#ticker')?.value.trim();
+  if(!ticker){alert('ティッカーコードを入力してください'); return;}
+  quoteLoading=true; render();
+
+  try{
+    const res=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=6mo&interval=1d`);
+    if(!res.ok) throw new Error('fetch fail');
+    const json=await res.json();
+    const result=json.chart?.result?.[0];
+    if(!result) throw new Error('no data');
+    const quote=result.indicators?.quote?.[0];
+    const prices=(quote?.close||[]).map(Number).filter(Number.isFinite);
+    const latest=prices.at(-1);
+    if(!latest) throw new Error('no price');
+    const stock=data.invest.find(x=>x.id===modal.id);
+    if(stock){
+      stock.currentPrice=latest;
+      stock.history=prices.slice(-90);
+      stock.priceUpdated=new Date().toLocaleString('ja-JP');
+      save();
+    }
+    document.querySelector('#currentPrice').value=latest;
+    quoteLoading=false;
+    render();
+  }catch(err){
+    quoteLoading=false;
+    render();
+    alert('株価を取得できませんでした。CORS制限の可能性があります。現在株価を手入力してください。');
+  }
+}
+
+function accountEffect(tx){return tx.type==='income'?Number(tx.amount):-Number(tx.amount);}
+function reverseAccountEffect(tx){if(!tx||!tx.applied||!tx.accountId)return; const account=data.cash.find(x=>x.id===tx.accountId); if(account) account.amount -= accountEffect(tx);}
+function applyAccountEffect(tx){if(!tx.accountId)return; const account=data.cash.find(x=>x.id===tx.accountId); if(account) account.amount += accountEffect(tx); tx.applied=true;}
+
+function saveModal(){
+  const section=modal.section;
+  const id=modal.id;
+  const arr=section==='cash'?data.cash:section==='invest'?data.invest:section==='point'?data.points:section==='tx'?data.tx:data.recurring;
+  const item=id==='new'?{id:uid()}:arr.find(x=>x.id===id);
+  if(!item)return;
+
+  if(section==='tx'&&id!=='new') reverseAccountEffect(item);
+
+  item.name=document.querySelector('#name').value.trim();
+  if(!item.name)return;
+
+  if(section==='invest'){
+    item.type=document.querySelector('#investType').value;
+    item.ticker=document.querySelector('#ticker').value.trim();
+    item.shares=Number(document.querySelector('#shares').value)||0;
+    item.costPrice=Number(document.querySelector('#costPrice').value)||0;
+    item.currentPrice=Number(document.querySelector('#currentPrice').value)||item.costPrice;
+    item.amount=stockValue(item);
+    item.gain=stockGain(item);
+    item.history=item.history||[];
+  }else{
+    item.amount=Number(document.querySelector('#amount').value)||0;
+  }
+
+  if(section==='point') item.type=document.querySelector('#pointType').value;
+
+  if(section==='tx'){
+    item.type=transactionType;
+    item.date=document.querySelector('#date').value||today();
+    item.accountId=document.querySelector('#account').value;
+    item.payment=document.querySelector('#payment').value||'未設定';
+    item.memo=document.querySelector('#memo').value;
+    item.applied=false;
+    applyAccountEffect(item);
+  }
+
+  if(section==='rec'){
+    item.type=transactionType;
+    item.day=Math.min(31,Math.max(1,Number(document.querySelector('#day').value)||1));
+    item.payment=document.querySelector('#payment').value||'未設定';
+    item.memo=document.querySelector('#memo').value;
+  }
+
+  if(id==='new') arr.push(item);
+  save();
+  closeModal();
+}
+
+function deleteItem(section,id){
+  const arr=section==='cash'?data.cash:section==='invest'?data.invest:section==='point'?data.points:section==='tx'?data.tx:data.recurring;
+  const item=arr.find(x=>x.id===id);
+  if(section==='tx') reverseAccountEffect(item);
+  const index=arr.indexOf(item);
+  if(index>=0) arr.splice(index,1);
+  save();
+  closeModal();
+}
+
+function renderDayModal(){
+  const tx=dateTransactions(selectedDate);
+  const income=sum(tx.filter(x=>x.type==='income'),'amount');
+  const expense=sum(tx.filter(x=>x.type==='expense'),'amount');
+  const [y,m,d]=selectedDate.split('-');
+  return `
+    <div class="overlay sheet-overlay" onclick="if(event.target===this){selectedDate=null;render()}">
+      <div class="form sheet">
+        <div class="form-head"><h3>${m}月${d}日</h3><button class="close" onclick="selectedDate=null;render()">×</button></div>
+        <p class="label">収入 <b class="pos">${yen(income)}</b>　支出 <b class="neg">${yen(expense)}</b>　差引 <b>${signed(income-expense)}</b></p>
+        <div class="list">${tx.map(x=>`<div class="row"><div class="name">${x.virtual?'<span class="tag">固定費</span>':''}${escapeHtml(x.name)}<div class="meta">支払:${escapeHtml(x.payment||'未設定')}</div></div><b class="${x.type==='income'?'pos':'neg'}">${x.type==='income'?'+':'-'}${yen(x.amount)}</b></div>`).join('')||empty()}</div>
+        <button class="add" onclick="selectedDate=null;openModal('tx','new')">＋ この日の収入・支出を追加</button>
+      </div>
+    </div>
+  `;
+}
+
 render();
-</script></body></html>
+</script>
+</body>
+</html>

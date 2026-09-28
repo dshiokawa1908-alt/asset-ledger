@@ -269,12 +269,6 @@ section.card {
 .balance.positive {
   background: rgba(62, 108, 88, 0.08);
 }
-.pill-group {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -355,9 +349,6 @@ section.card {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 12px;
-}
-.card-config .config-row:last-child {
-  margin-bottom: 0;
 }
 .payment-status {
   font-size: 12px;
@@ -460,12 +451,54 @@ function load() {
   d.tx = d.tx || [];
   d.recurring = d.recurring || [];
   d.cards = d.cards || [];
-  processPayments();
   return d;
 }
 
 function save() {
   localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function processPayments() {
+  if (!data.cards || !Array.isArray(data.cards)) return;
+  
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = today.getMonth();
+  const d = today.getDate();
+
+  data.cards.forEach(card => {
+    if (d === card.paymentDay) {
+      const closingDay = card.closingDay;
+      const lastClosed = card.lastClosingDate ? new Date(card.lastClosingDate) : new Date(y, m - 1, closingDay);
+      const periodStart = new Date(lastClosed.getFullYear(), lastClosed.getMonth(), closingDay);
+      periodStart.setMonth(periodStart.getMonth() - 1);
+      const nextClose = new Date(y, m, closingDay);
+
+      const usedInPeriod = data.tx.filter(x => {
+        const xDate = new Date(x.date + ' 00:00');
+        return x.payment === PAYMENTS[1] && x.type === 'expense' && xDate >= periodStart && xDate < nextClose;
+      }).reduce((s, x) => s + Number(x.amount || 0), 0);
+
+      if (usedInPeriod > 0) {
+        const account = data.cash.find(a => a.id === card.accountId);
+        if (account) {
+          account.amount -= usedInPeriod;
+          card.usedAmount = 0;
+          card.lastClosingDate = nextClose.toISOString().split('T')[0];
+          save();
+        }
+      }
+    }
+
+    const closingDay = card.closingDay;
+    const closingDate = new Date(y, m, closingDay);
+    const lastPeriodStart = new Date(y, m - 1, closingDay);
+
+    card.usedAmount = data.tx.filter(x => {
+      const xDate = new Date(x.date + ' 00:00');
+      return x.payment === PAYMENTS[1] && x.type === 'expense' && xDate >= lastPeriodStart && xDate < closingDate;
+    }).reduce((s, x) => s + Number(x.amount || 0), 0);
+  });
 }
 
 function monthTx(y = year, m = month) {
@@ -508,47 +541,6 @@ function paymentTotals() {
   return Object.entries(b).filter(([k]) => k !== PAYMENTS[0]).sort((x, y) => y[1] - x[1]);
 }
 
-function processPayments() {
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = today.getMonth();
-  const d = today.getDate();
-
-  data.cards.forEach(card => {
-    if (d === card.paymentDay) {
-      const closingDay = card.closingDay;
-      const lastClosed = card.lastClosingDate ? new Date(card.lastClosingDate) : new Date(y, m - 1, closingDay);
-      const periodStart = new Date(lastClosed.getFullYear(), lastClosed.getMonth(), closingDay);
-      periodStart.setMonth(periodStart.getMonth() - 1);
-      const nextClose = new Date(y, m, closingDay);
-
-      const usedInPeriod = data.tx.filter(x => {
-        const xDate = new Date(x.date + ' 00:00');
-        return x.payment === PAYMENTS[1] && x.type === 'expense' && xDate >= periodStart && xDate < nextClose;
-      }).reduce((s, x) => s + Number(x.amount || 0), 0);
-
-      if (usedInPeriod > 0) {
-        const account = data.cash.find(a => a.id === card.accountId);
-        if (account) {
-          account.amount -= usedInPeriod;
-          card.usedAmount = 0;
-          card.lastClosingDate = nextClose.toISOString().split('T')[0];
-          save();
-        }
-      }
-    }
-
-    const closingDay = card.closingDay;
-    const closingDate = new Date(y, m, closingDay);
-    const lastPeriodStart = new Date(y, m - 1, closingDay);
-
-    card.usedAmount = data.tx.filter(x => {
-      const xDate = new Date(x.date + ' 00:00');
-      return x.payment === PAYMENTS[1] && x.type === 'expense' && xDate >= lastPeriodStart && xDate < closingDate;
-    }).reduce((s, x) => s + Number(x.amount || 0), 0);
-  });
-}
-
 function closeEdit() {
   edit = {};
   render();
@@ -561,10 +553,10 @@ function openEdit(sec, id) {
 
 function render() {
   const t = totals();
-  let html = `<header class="header"><div><div class="title">資産台帳</div><div class="sub">個人資産管理プロトタイプ</div></div><div>`;
-  html += `<button class="btn-small btn-primary" onclick="openEdit('cash','new')">+ 口座</button>`;
-  html += `<button class="btn-small btn-secondary" onclick="openEdit('card','new')">+ カード</button>`;
-  html += `<button class="btn-small btn-accent" onclick="openEdit('tx','new')">+ 取引</button></div></header><div class="container">`;
+  let html = '<header class="header"><div><div class="title">資産台帳</div><div class="sub">個人資産管理プロトタイプ</div></div><div>';
+  html += '<button class="btn-small btn-primary" onclick="openEdit(\'cash\',\'new\')">+ 口座</button>';
+  html += '<button class="btn-small btn-secondary" onclick="openEdit(\'card\',\'new\')">+ カード</button>';
+  html += '<button class="btn-small btn-accent" onclick="openEdit(\'tx\',\'new\')">+ 取引</button></div></header><div class="container">';
   html += summary(t);
   html += cardsSummary(t);
   html += paymentMethodsView();
@@ -572,25 +564,25 @@ function render() {
   html += balanceView();
   html += calendarView();
   if (edit.sec) html += editModal();
-  html += `</div>`;
+  html += '</div>';
   document.querySelector('#app').innerHTML = html;
   bindEvents();
 }
 
 function summary(t) {
-  let html = `<section class="card"><div class="hero-label">総資産（現金 + 投資 + ポイント）</div>`;
-  html += `<div class="hero-value">${yen(t.cash + t.invest + t.points)}</div></section>`;
-  html += `<section class="card"><div class="hero-grid">`;
-  html += `<div><div class="hero-label">今月収入</div><div class="hero-value" style="color: var(--jade)">${yen(t.income)}</div></div>`;
-  html += `<div><div class="hero-label">今月支出</div><div class="hero-value" style="color: var(--seal)">${yen(t.expense)}</div></div>`;
-  html += `</div></section>`;
+  let html = '<section class="card"><div class="hero-label">総資産（現金 + 投資 + ポイント）</div>';
+  html += '<div class="hero-value">' + yen(t.cash + t.invest + t.points) + '</div></section>';
+  html += '<section class="card"><div class="hero-grid">';
+  html += '<div><div class="hero-label">今月収入</div><div class="hero-value" style="color: var(--jade)">' + yen(t.income) + '</div></div>';
+  html += '<div><div class="hero-label">今月支出</div><div class="hero-value" style="color: var(--seal)">' + yen(t.expense) + '</div></div>';
+  html += '</div></section>';
   return html;
 }
 
 function cardsSummary(t) {
-  if (!data.cards.length) return '';
+  if (!data.cards || !data.cards.length) return '';
   
-  let html = `<section class="card"><div class="section"><span>クレジットカード</span><small>利用額と支払い予定</small></div><div class="list">`;
+  let html = '<section class="card"><div class="section"><span>クレジットカード</span><small>利用額と支払い予定</small></div><div class="list">';
   data.cards.forEach(card => {
     const account = data.cash.find(a => a.id === card.accountId);
     const acctName = account ? account.name : '未設定';
@@ -600,18 +592,18 @@ function cardsSummary(t) {
       payDay.setMonth(payDay.getMonth() + 1);
     }
     const daysUntilPayment = Math.ceil((payDay - today) / (1000 * 60 * 60 * 24));
-    html += row(`${card.name} - ${acctName}`, `${yen(card.usedAmount)} (${daysUntilPayment}日後)`, `openEdit('card','${card.id}')`);
+    html += row(card.name + ' - ' + acctName, yen(card.usedAmount) + ' (' + daysUntilPayment + '日後)', 'openEdit(\'card\',\'' + card.id + '\')');
   });
-  html += `</div></section>`;
+  html += '</div></section>';
   return html;
 }
 
 function pointsView(t) {
-  let html = `<div class="section"><span>ポイント・マイル残高</span><small>合計 ${t.points.toLocaleString('ja-JP')}</small></div><div class="list">`;
+  let html = '<div class="section"><span>ポイント・マイル残高</span><small>合計 ' + t.points.toLocaleString('ja-JP') + '</small></div><div class="list">';
   data.points.forEach(x => {
-    html += row(`${x.name} (${x.service || 'N/A'})`, yen(x.amount), `openEdit('point','${x.id}')`);
+    html += row(x.name + ' (' + (x.service || 'N/A') + ')', yen(x.amount), 'openEdit(\'point\',\'' + x.id + '\')');
   });
-  html += `</div>`;
+  html += '</div>';
   return html;
 }
 
@@ -634,18 +626,18 @@ function paymentMethodsView() {
     const x2 = cx + r * Math.cos(angle + sliceAngle);
     const y2 = cy + r * Math.sin(angle + sliceAngle);
     const large = sliceAngle > Math.PI ? 1 : 0;
-    slices.push(`<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${colors[idx % colors.length]}" opacity="0.9"/>`);
+    slices.push('<path d="M ' + cx + ' ' + cy + ' L ' + x1 + ' ' + y1 + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + colors[idx % colors.length] + '" opacity="0.9"/>');
     angle += sliceAngle;
   });
 
-  let html = `<section class="card"><div class="section"><span>支払い方法別支出</span><small>今月</small></div><div class="chart-container">`;
-  html += `<svg width="100%" viewBox="0 0 ${2 * (cx + 20)} ${2 * (cy + 20)}" class="pie-chart" style="max-width:100%;height:auto">`;
+  let html = '<section class="card"><div class="section"><span>支払い方法別支出</span><small>今月</small></div><div class="chart-container">';
+  html += '<svg width="100%" viewBox="0 0 ' + (2 * (cx + 20)) + ' ' + (2 * (cy + 20)) + '" class="pie-chart" style="max-width:100%;height:auto">';
   html += slices.join('');
-  html += `</svg></div><div class="list">`;
+  html += '</svg></div><div class="list">';
   a.forEach(([name, amount]) => {
     html += row(name, yen(amount), '');
   });
-  html += `</div></section>`;
+  html += '</div></section>';
   return html;
 }
 
@@ -664,14 +656,14 @@ function balanceView() {
 
   let html = '';
   if (prevBalance !== 0) {
-    html += `<section class="balance ${prevBalance < 0 ? 'negative' : 'positive'}">`;
-    html += `<div class="hero-label">先月の収支</div>`;
-    html += `<div class="hero-value" style="color: ${prevBalance < 0 ? 'var(--seal)' : 'var(--jade)'}">${signed(prevBalance)}</div></section>`;
+    html += '<section class="balance ' + (prevBalance < 0 ? 'negative' : 'positive') + '">';
+    html += '<div class="hero-label">先月の収支</div>';
+    html += '<div class="hero-value" style="color: ' + (prevBalance < 0 ? 'var(--seal)' : 'var(--jade)') + '">' + signed(prevBalance) + '</div></section>';
   }
   if (thisBalance !== 0) {
-    html += `<section class="balance ${thisBalance < 0 ? 'negative' : 'positive'}">`;
-    html += `<div class="hero-label">今月の収支</div>`;
-    html += `<div class="hero-value" style="color: ${thisBalance < 0 ? 'var(--seal)' : 'var(--jade)'}">${signed(thisBalance)}</div></section>`;
+    html += '<section class="balance ' + (thisBalance < 0 ? 'negative' : 'positive') + '">';
+    html += '<div class="hero-label">今月の収支</div>';
+    html += '<div class="hero-value" style="color: ' + (thisBalance < 0 ? 'var(--seal)' : 'var(--jade)') + '">' + signed(thisBalance) + '</div></section>';
   }
   return html;
 }
@@ -686,32 +678,32 @@ function calendarView() {
     daysByDate[d] = (daysByDate[d] || 0) + (x.type === 'income' ? +x.amount : -x.amount);
   });
 
-  let html = `<section class="card"><div class="section"><span>${year}年${month + 1}月</span></div><div class="calendar">`;
+  let html = '<section class="card"><div class="section"><span>' + year + '年' + (month + 1) + '月</span></div><div class="calendar">';
   ['日', '月', '火', '水', '木', '金', '土'].forEach(x => {
-    html += `<div class="day-header">${x}</div>`;
+    html += '<div class="day-header">' + x + '</div>';
   });
   for (let i = 0; i < firstDay; i++) {
     html += '<div class="day other-month"></div>';
   }
   for (let i = 1; i <= days; i++) {
-    const dayKey = `${year}-${pad(month + 1)}-${pad(i)}`;
+    const dayKey = year + '-' + pad(month + 1) + '-' + pad(i);
     const today = new Date();
     const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === i;
     const amount = daysByDate[i] || 0;
-    html += `<div class="day ${isToday ? 'today' : ''}" onclick="selected='${dayKey}';render()">`;
-    html += `<div class="day-date">${i}</div>`;
-    html += `<div class="day-amount ${amount >= 0 ? 'income' : 'expense'}">${amount >= 0 ? '+' : ''}${yen(Math.abs(amount))}</div></div>`;
+    html += '<div class="day ' + (isToday ? 'today' : '') + '" onclick="selected=\'' + dayKey + '\';render()">';
+    html += '<div class="day-date">' + i + '</div>';
+    html += '<div class="day-amount ' + (amount >= 0 ? 'income' : 'expense') + '">' + (amount >= 0 ? '+' : '') + yen(Math.abs(amount)) + '</div></div>';
   }
-  html += `</div><div style="display:flex;gap:8px;margin-top:16px">`;
-  html += `<button class="btn-small btn-primary" onclick="month=Math.max(0,month-1);render()">◀ 前月</button>`;
-  html += `<button class="btn-small btn-primary" onclick="year=new Date().getFullYear();month=new Date().getMonth();render()">今月</button>`;
-  html += `<button class="btn-small btn-primary" onclick="const next=new Date(year,month+1,1);year=next.getFullYear();month=next.getMonth();render()">次月 ▶</button>`;
-  html += `</div></section>`;
+  html += '</div><div style="display:flex;gap:8px;margin-top:16px">';
+  html += '<button class="btn-small btn-primary" onclick="month=Math.max(0,month-1);render()">◀ 前月</button>';
+  html += '<button class="btn-small btn-primary" onclick="year=new Date().getFullYear();month=new Date().getMonth();render()">今月</button>';
+  html += '<button class="btn-small btn-primary" onclick="const next=new Date(year,month+1,1);year=next.getFullYear();month=next.getMonth();render()">次月 ▶</button>';
+  html += '</div></section>';
   
   if (selected) {
-    html += `<div class="overlay" onclick="if(event.target===this){selected='';render()}"><div class="form"><h2>${selected}</h2>`;
+    html += '<div class="overlay" onclick="if(event.target===this){selected=\'\';render()}"><div class="form"><h2>' + selected + '</h2>';
     html += dayTransactions();
-    html += `<div class="form-actions"><button class="btn-primary" onclick="selected='';render()">閉じる</button></div></div></div>`;
+    html += '<div class="form-actions"><button class="btn-primary" onclick="selected=\'\';render()">閉じる</button></div></div></div>';
   }
   return html;
 }
@@ -722,13 +714,13 @@ function dayTransactions() {
   const e = sum(a.filter(x => x.type === 'expense'), 'amount');
 
   if (a.length) {
-    let html = `<div class="list">`;
+    let html = '<div class="list">';
     a.forEach(x => {
-      html += row(x.category, x.type === 'income' ? signed(x.amount) : signed(-x.amount), `openEdit('tx','${x.id}')`);
+      html += row(x.category, x.type === 'income' ? signed(x.amount) : signed(-x.amount), 'openEdit(\'tx\',\'' + x.id + '\')');
     });
-    html += `</div><div style="margin-top:16px;padding:12px;background:var(--paper2);border-radius:8px">`;
-    html += `<div class="hero-label">合計</div>`;
-    html += `<div class="hero-value">${signed(i - e)}</div></div>`;
+    html += '</div><div style="margin-top:16px;padding:12px;background:var(--paper2);border-radius:8px">';
+    html += '<div class="hero-label">合計</div>';
+    html += '<div class="hero-value">' + signed(i - e) + '</div></div>';
     return html;
   }
   return '<div class="empty">この日の取引はありません</div>';
@@ -737,14 +729,14 @@ function dayTransactions() {
 function editModal() {
   const { sec, id } = edit;
   if (sec === 'card') {
-    return `<div class="overlay" onclick="if(event.target===this)closeEdit()"><div class="form">${cardForm()}</div></div>`;
+    return '<div class="overlay" onclick="if(event.target===this)closeEdit()"><div class="form">' + cardForm() + '</div></div>';
   }
-  let html = `<div class="overlay" onclick="if(event.target===this)closeEdit()"><div class="form"><h2>編集</h2>`;
+  let html = '<div class="overlay" onclick="if(event.target===this)closeEdit()"><div class="form"><h2>編集</h2>';
   html += formContent();
-  html += `<div class="form-actions">`;
-  html += `<button class="btn-secondary btn-small" onclick="if(confirm('削除しますか?'))removeItem('${sec}','${id}');closeEdit()">削除</button>`;
-  html += `<button class="btn-primary" onclick="submitForm()">保存</button>`;
-  html += `<button class="btn-small" onclick="closeEdit()">キャンセル</button></div></div></div>`;
+  html += '<div class="form-actions">';
+  html += '<button class="btn-secondary btn-small" onclick="if(confirm(\'削除しますか?\'))removeItem(\'' + sec + '\',\'' + id + '\');closeEdit()">削除</button>';
+  html += '<button class="btn-primary" onclick="submitForm()">保存</button>';
+  html += '<button class="btn-small" onclick="closeEdit()">キャンセル</button></div></div></div>';
   return html;
 }
 
@@ -754,21 +746,21 @@ function cardForm() {
     ? { id: uid(), name: '', closingDay: 15, paymentDay: 10, accountId: 'acc1', usedAmount: 0 }
     : data.cards.find(c => c.id === id) || { id: uid(), name: '', closingDay: 15, paymentDay: 10, accountId: 'acc1', usedAmount: 0 };
 
-  let html = `<h2>${id === 'new' ? '新規カード' : 'カード編集'}</h2><div class="card-config">`;
-  html += `<div class="form-group"><label>カード名</label><input type="text" id="cardName" value="${card.name}" placeholder="楽天カード"/></div>`;
-  html += `<div class="config-row">`;
-  html += `<div class="form-group"><label>締め日</label><input type="number" id="closingDay" min="1" max="31" value="${card.closingDay}"/></div>`;
-  html += `<div class="form-group"><label>支払日</label><input type="number" id="paymentDay" min="1" max="31" value="${card.paymentDay}"/></div>`;
-  html += `</div><div class="form-group"><label>引き落とし口座</label><select id="cardAccount">`;
-  html += `<option value="">--- 選択 ---</option>`;
+  let html = '<h2>' + (id === 'new' ? '新規カード' : 'カード編集') + '</h2><div class="card-config">';
+  html += '<div class="form-group"><label>カード名</label><input type="text" id="cardName" value="' + card.name + '" placeholder="楽天カード"/></div>';
+  html += '<div class="config-row">';
+  html += '<div class="form-group"><label>締め日</label><input type="number" id="closingDay" min="1" max="31" value="' + card.closingDay + '"/></div>';
+  html += '<div class="form-group"><label>支払日</label><input type="number" id="paymentDay" min="1" max="31" value="' + card.paymentDay + '"/></div>';
+  html += '</div><div class="form-group"><label>引き落とし口座</label><select id="cardAccount">';
+  html += '<option value="">--- 選択 ---</option>';
   data.cash.forEach(a => {
-    html += `<option value="${a.id}" ${card.accountId === a.id ? 'selected' : ''}>${a.name}</option>`;
+    html += '<option value="' + a.id + '" ' + (card.accountId === a.id ? 'selected' : '') + '>' + a.name + '</option>';
   });
-  html += `</select></div><div class="payment-status">毎月${card.closingDay}日の締めで、${card.paymentDay}日に口座から自動引き落とされます</div></div>`;
-  html += `<div class="form-actions">`;
-  html += `<button class="btn-secondary btn-small" onclick="if(confirm('削除しますか?'))removeItem('card','${id}');closeEdit()">${id === 'new' ? '新規作成' : '削除'}</button>`;
-  html += `<button class="btn-primary" onclick="submitCardForm()">保存</button>`;
-  html += `<button class="btn-small" onclick="closeEdit()">キャンセル</button></div>`;
+  html += '</select></div><div class="payment-status">毎月' + card.closingDay + '日の締めで、' + card.paymentDay + '日に口座から自動引き落とされます</div></div>';
+  html += '<div class="form-actions">';
+  html += '<button class="btn-secondary btn-small" onclick="if(confirm(\'削除しますか?\'))removeItem(\'card\',\'' + id + '\');closeEdit()">' + (id === 'new' ? '新規作成' : '削除') + '</button>';
+  html += '<button class="btn-primary" onclick="submitCardForm()">保存</button>';
+  html += '<button class="btn-small" onclick="closeEdit()">キャンセル</button></div>';
   return html;
 }
 
@@ -778,44 +770,44 @@ function formContent() {
   const x = id === 'new' ? null : arr.find(a => a.id === id);
   const isTx = sec === 'tx';
 
-  let html = `<div class="form-group"><label>${sec === 'cash' ? '口座名' : sec === 'invest' ? '投資商品' : sec === 'point' ? 'ポイント名' : 'カテゴリ'}</label>`;
-  html += `<input type="text" id="name" value="${x?.name || x?.category || ''}" placeholder="${sec === 'cash' ? 'メインバンク' : sec === 'invest' ? 'NISA' : sec === 'point' ? '楽天ポイント' : '食費'}"/></div>`;
+  let html = '<div class="form-group"><label>' + (sec === 'cash' ? '口座名' : sec === 'invest' ? '投資商品' : sec === 'point' ? 'ポイント名' : 'カテゴリ') + '</label>';
+  html += '<input type="text" id="name" value="' + (x?.name || x?.category || '') + '" placeholder="' + (sec === 'cash' ? 'メインバンク' : sec === 'invest' ? 'NISA' : sec === 'point' ? '楽天ポイント' : '食費') + '"/></div>';
 
   if (sec === 'invest') {
-    html += `<div class="form-group"><label>タイプ</label><select id="type">`;
-    html += `<option value="NISA" ${x?.type === 'NISA' ? 'selected' : ''}>NISA</option>`;
-    html += `<option value="株式" ${x?.type === '株式' ? 'selected' : ''}>株式</option>`;
-    html += `<option value="その他" ${x?.type === 'その他' ? 'selected' : ''}>その他</option></select></div>`;
+    html += '<div class="form-group"><label>タイプ</label><select id="type">';
+    html += '<option value="NISA" ' + (x?.type === 'NISA' ? 'selected' : '') + '>NISA</option>';
+    html += '<option value="株式" ' + (x?.type === '株式' ? 'selected' : '') + '>株式</option>';
+    html += '<option value="その他" ' + (x?.type === 'その他' ? 'selected' : '') + '>その他</option></select></div>';
   }
 
   if (sec === 'point') {
-    html += `<div class="form-group"><label>サービス</label>`;
-    html += `<input type="text" id="service" value="${x?.service || ''}" placeholder="楽天"/></div>`;
+    html += '<div class="form-group"><label>サービス</label>';
+    html += '<input type="text" id="service" value="' + (x?.service || '') + '" placeholder="楽天"/></div>';
   }
 
   if (isTx) {
-    html += `<div class="form-group"><label>日付</label>`;
-    html += `<input type="date" id="date" value="${x?.date || new Date().toISOString().split('T')[0]}"/></div>`;
-    html += `<div class="form-group"><label>取引タイプ</label><select id="type">`;
-    html += `<option value="income" ${x?.type === 'income' ? 'selected' : ''}>収入</option>`;
-    html += `<option value="expense" ${x?.type === 'expense' ? 'selected' : ''}>支出</option></select></div>`;
-    html += `<div class="form-group"><label>金額</label>`;
-    html += `<input type="number" id="amount" min="0" value="${x?.amount || 0}" placeholder="0"/></div>`;
-    html += `<div class="form-group"><label>支払い方法</label><select id="payment">`;
+    html += '<div class="form-group"><label>日付</label>';
+    html += '<input type="date" id="date" value="' + (x?.date || new Date().toISOString().split('T')[0]) + '"/></div>';
+    html += '<div class="form-group"><label>取引タイプ</label><select id="type">';
+    html += '<option value="income" ' + (x?.type === 'income' ? 'selected' : '') + '>収入</option>';
+    html += '<option value="expense" ' + (x?.type === 'expense' ? 'selected' : '') + '>支出</option></select></div>';
+    html += '<div class="form-group"><label>金額</label>';
+    html += '<input type="number" id="amount" min="0" value="' + (x?.amount || 0) + '" placeholder="0"/></div>';
+    html += '<div class="form-group"><label>支払い方法</label><select id="payment">';
     PAYMENTS.forEach((p, i) => {
-      html += `<option value="${i}" ${x?.payment === p ? 'selected' : ''}>${p}</option>`;
+      html += '<option value="' + i + '" ' + (x?.payment === p ? 'selected' : '') + '>' + p + '</option>';
     });
-    html += `</select></div><div class="form-group"><label>連動口座</label><select id="accountId">`;
-    html += `<option value="">--- なし ---</option>`;
+    html += '</select></div><div class="form-group"><label>連動口座</label><select id="accountId">';
+    html += '<option value="">--- なし ---</option>';
     data.cash.forEach(a => {
-      html += `<option value="${a.id}" ${x?.accountId === a.id ? 'selected' : ''}>${a.name}</option>`;
+      html += '<option value="' + a.id + '" ' + (x?.accountId === a.id ? 'selected' : '') + '>' + a.name + '</option>';
     });
-    html += `</select></div>`;
+    html += '</select></div>';
   }
 
   if (sec !== 'tx') {
-    html += `<div class="form-group"><label>金額</label>`;
-    html += `<input type="number" id="amount" min="0" value="${x?.amount || 0}" placeholder="0"/></div>`;
+    html += '<div class="form-group"><label>金額</label>';
+    html += '<input type="number" id="amount" min="0" value="' + (x?.amount || 0) + '" placeholder="0"/></div>';
   }
 
   return html;
@@ -882,18 +874,19 @@ function removeItem(sec, id) {
   }
 }
 
-function row(name, amount, onclick = '') {
-  let html = `<div class="row"`;
+function row(name, amount, onclick) {
+  let html = '<div class="row"';
   if (onclick) {
-    html += ` onclick="${onclick}" style="cursor:pointer"`;
+    html += ' onclick="' + onclick + '" style="cursor:pointer"';
   }
-  html += `><div class="name">${name}</div><div class="amount">${amount}</div></div>`;
+  html += '><div class="name">' + name + '</div><div class="amount">' + amount + '</div></div>';
   return html;
 }
 
 function bindEvents() {}
 
 data = load();
+processPayments();
 render();
 </script>
 </body>
